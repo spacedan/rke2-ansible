@@ -1,5 +1,5 @@
 ---
-name: Vanilla Ubuntu
+name: Primary Tests
 
 on:
   pull_request:
@@ -73,13 +73,13 @@ jobs:
         id: validate
         run: |
           cd testing/
-          terraform validate -no-color
+          terraform validate
 
       - name: Terraform Plan
         id: plan
         run: |
           cd testing/
-          terraform plan -var "GITHUB_RUN_ID=$GITHUB_RUN_ID" -no-color
+          terraform plan -var "GITHUB_RUN_ID=$GITHUB_RUN_ID"
         continue-on-error: true
 
       - name: Terraform Plan Status

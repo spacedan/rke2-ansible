@@ -40,7 +40,7 @@ resource "aws_security_group" "allow-all" {
 resource "aws_instance" "control_node" {
   count = var.control_nodes
 
-  ami           = lookup(var.amis[var.aws_region], var.os)
+  ami           = var.amis[var.aws_region][var.os].ami
   instance_type = var.instance_type
   subnet_id     = var.aws_subnet
   key_name      = "rke2-ansible-ci"
@@ -63,7 +63,7 @@ resource "aws_instance" "control_node" {
     connection {
       host        = coalesce(self.public_ip, self.private_ip)
       type        = "ssh"
-      user        = "ubuntu"
+      user        = var.amis[var.aws_region][var.os].user
       private_key = file(pathexpand(".key"))
     }
     inline = [
@@ -76,7 +76,7 @@ resource "aws_instance" "control_node" {
 resource "aws_instance" "worker_node" {
   count = var.worker_nodes
 
-  ami                         = lookup(var.amis[var.aws_region], var.os)
+  ami           = var.amis[var.aws_region][var.os].ami
   instance_type               = var.instance_type
   subnet_id                   = var.aws_subnet
   key_name                    = "rke2-ansible-ci"
@@ -101,7 +101,7 @@ resource "aws_instance" "worker_node" {
     connection {
       host        = coalesce(self.public_ip, self.private_ip)
       type        = "ssh"
-      user        = "ubuntu"
+      user        = var.amis[var.aws_region][var.os].user
       private_key = file(pathexpand(".key"))
     }
     inline = [

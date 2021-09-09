@@ -25,7 +25,7 @@ variable "instance_type" {
 # OS Options
 #  rhel-8.4
 #  rhel-7.8
-#  opensuse-15-SP2
+#  sles-15-SP2
 #  ubuntu-20.04
 #  ubuntu-18.04
 #  centos-8.2
@@ -33,21 +33,41 @@ variable "instance_type" {
 variable "os" {
   type        = string
   description = "AWS AMI OS"
-  default     = "ubuntu-20.04"
+  default     = "sles-15-SP2"
 }
 
 variable "amis" {
-  description = "List of RHEL OS images based on regions"
-  type        = map(map(string))
+  description = "AWS images and needed users"
+  type = map(map(object({
+    ami  = string
+    user = string
+  })))
   default = {
     "us-gov-west-1" = {
-      "rhel-8.4"        = "ami-0ac4e06a69870e5be"
-      "rhel-7.8"        = "ami-e9d5ec88"
-      "opensuse-15-SP2" = "ami-04e3d865"
-      "ubuntu-20.04"    = "ami-84556de5"
-      "ubuntu-18.04"    = "ami-0086246041e9dbd36"
-      "centos-8.2"      = "ami-967158f7"
-      "centos-7.8"      = "ami-03f2d3b9602dcc98d"
+      "rhel-8.4" = {
+        ami  = "ami-0ac4e06a69870e5be"
+        user = "ec2-user"
+      }
+      "rhel-7.8" = {
+        ami  = "ami-e9d5ec88"
+        user = "ec2-user"
+      }
+      "sles-15-SP2" = {
+        ami  = "ami-04e3d865"
+        user = "ec2-user"
+      }
+      "ubuntu-20.04" = {
+        ami  = "ami-84556de5"
+        user = "ubuntu"
+      }
+      "centos-8.2" = {
+        ami  = "ami-967158f7"
+        user = "centos"
+      }
+      "centos-7.8" = {
+        ami  = "ami-bbba86da"
+        user = "centos"
+      }
     }
   }
 }
@@ -62,12 +82,6 @@ variable "worker_nodes" {
   type        = number
   description = "Number of RKE2 worker nodes"
   default     = 3
-}
-
-variable "ansible_user" {
-  type        = string
-  description = "Username used by Ansible to run remote configuration"
-  default     = "ubuntu"
 }
 
 variable "GITHUB_RUN_ID" {}
