@@ -1,0 +1,35 @@
+---
+- name: Create node-exporter policy
+  copy:
+    dest: "/tmp/local.mod"
+    content: |
+      module local 1.0;
+
+      require {
+              type container_file_t;
+              type init_t;
+              type container_t;
+              class dir search;
+              class file { open read };
+      }
+
+      #============= container_t ==============
+
+      #!!!! This avc is a constraint violation.  You would need to modify the attributes of either the source or target types to allow this access.
+      #Constraint rule: 
+      #       mlsconstrain file { ioctl read lock execute execute_no_trans } ((h1 dom h2 -Fail-)  or (t1 != mcs_constrained_type -Fail-) ); Constraint DENIED
+
+      #       Possible cause is the source level (s0:c428,c535) and target level (s0:c427,c542) are different.
+      allow container_t container_file_t:file read;
+      allow container_t init_t:dir search;
+      allow container_t init_t:file { open read };
+
+- name: Compile node-exporter policy
+  shell: |
+    cd /tmp
+    checkmodule -M -m -o local.mod local.te
+    semodule -i local.pp
+
+- name: Clean up node-exporter policy
+  shell: |
+    rm -f /tmp/local.mod /tmp/local.te /tmp/local.pp

@@ -73,3 +73,5 @@
   include_role:
     name: rke2_common
     tasks_from: cis-hardening
+
+- include: selinux_policies.yaml
