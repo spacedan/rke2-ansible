@@ -1,0 +1,14 @@
+---
+- name: Create the /etc/rancher/rke2 config dir
+  file:
+    path: /etc/rancher/rke2
+    state: directory
+    recurse: yes
+
+- name: Add psa policy configuration file
+  copy:
+    src: "{{ psa_policy_config_file_path }}"
+    dest: "/etc/rancher/rke2/rancher-psact.yaml" 
+    mode: '0640'
+    owner: root
+    group: root
