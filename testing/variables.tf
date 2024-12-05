@@ -1,20 +1,19 @@
 variable "aws_region" {
   type        = string
   description = "AWS Region the instance is launched in"
-  default     = "us-gov-west-1"
+  default     = "us-east-1"
 }
 
 variable "aws_subnet" {
   description = "List of vectors of subnets and Availability Zones"
   type        = string
-  default     = "subnet-0523d8467cf8e5cec"
+  default     = "subnet-03a4955fe22027b9b"
 }
 
 variable "tf_user" {
   type    = string
-  default = "rke2-ansible-github-actions"
+  default = "djh-ansible-testing"
 }
-
 ### AMI
 variable "instance_type" {
   type        = string
@@ -23,6 +22,7 @@ variable "instance_type" {
 }
 
 # OS Options
+#  rhel9
 #  rhel8
 #  rhel7
 #  sles15sp2
@@ -34,7 +34,7 @@ variable "instance_type" {
 variable "os" {
   type        = string
   description = "AWS AMI OS"
-  default     = "ubuntu20"
+  default     = "rhel9" 
 }
 
 variable "amis" {
@@ -44,6 +44,12 @@ variable "amis" {
     user = string
   })))
   default = {
+    "us-east-1" = {
+      "rhel9" = {
+        ami = "ami-0a45c8b16782f3406"  # ami  = "ami-0a45c8b16782f3406"
+        user = "ec2-user"
+      }
+    }
     "us-gov-west-1" = {
       "rhel8" = {
         ami  = "ami-0ac4e06a69870e5be"
@@ -84,25 +90,28 @@ variable "amis" {
 variable "control_nodes" {
   type        = number
   description = "Number of RKE2 manager nodes"
-  default     = 3
+  default     = 2
 }
 
 variable "worker_nodes" {
   type        = number
   description = "Number of RKE2 worker nodes"
-  default     = 2
+  default     = 1
 }
 
 variable "extra_worker_nodes" {
   type        = number
   description = "Number of RKE2 worker nodes to add for idempotency tests"
-  default     = 2
+  default     = 1
 }
 
 variable "ansible_user" {
   type        = string
   description = "Username used by Ansible to run remote configuration"
-  default     = "ubuntu"
+  default     = "ec2-user"
 }
 
-variable "GITHUB_RUN_ID" {}
+variable "GITHUB_RUN_ID" {
+  type        = number
+  default     = 0
+}

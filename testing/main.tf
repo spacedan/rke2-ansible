@@ -9,7 +9,7 @@ provider "aws" {
 ###
 resource "aws_security_group" "allow-all" {
   name   = "${var.tf_user}-allow-all-${var.GITHUB_RUN_ID}"
-  vpc_id = "vpc-07402b459d3b18976"
+  vpc_id = "vpc-07c1f657661bf1eea"
 
   ingress {
     from_port   = 0
@@ -43,14 +43,14 @@ resource "aws_instance" "control_node" {
   ami           = var.amis[var.aws_region][var.os].ami
   instance_type = var.instance_type
   subnet_id     = var.aws_subnet
-  key_name      = "rke2-ansible-ci"
+  key_name      = "djh-tf-ansible-testing"
   root_block_device {
     volume_type = "standard"
     volume_size = 30
   }
 
   vpc_security_group_ids = [aws_security_group.allow-all.id]
-
+ 
   tags = {
     Name       = "rke2_ansible-testing-server-${var.os}-${var.GITHUB_RUN_ID}-${count.index}"
     Owner      = var.tf_user
@@ -78,7 +78,7 @@ resource "aws_instance" "worker_node" {
   ami                         = var.amis[var.aws_region][var.os].ami
   instance_type               = var.instance_type
   subnet_id                   = var.aws_subnet
-  key_name                    = "rke2-ansible-ci"
+  key_name                    = "djh-tf-ansible-testing"
   associate_public_ip_address = true
 
   vpc_security_group_ids = [aws_security_group.allow-all.id]
@@ -115,7 +115,7 @@ resource "aws_instance" "extra_worker_node" {
   ami                         = var.amis[var.aws_region][var.os].ami
   instance_type               = var.instance_type
   subnet_id                   = var.aws_subnet
-  key_name                    = "rke2-ansible-ci"
+  key_name                    = "djh-tf-ansible-testing"
   associate_public_ip_address = true
 
   vpc_security_group_ids = [aws_security_group.allow-all.id]
