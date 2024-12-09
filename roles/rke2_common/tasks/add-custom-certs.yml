@@ -1,0 +1,36 @@
+---
+- name: "Check for required certs in {{ playbook_dir }}/ca_certs/"  # noqa name[template] yaml[line-length]
+  ansible.builtin.stat:
+    path: "{{ playbook_dir }}/ca_certs/server/tls/{{ item }}"
+    with_items: "{{ custom_ca_cert_files }}"
+  register: got_custom_ca_certs
+  delegate_to: 127.0.0.1
+  become: false
+
+- name: Verifying if file exists
+  debug: msg="File {{ item.item }} exist"
+  with_items: "{{ got_custom_ca_certs.results }}"
+  when: item.stat.exists
+
+# - name: "Check for images tar.zst in {{ playbook_dir }}/tarball_install/rke2-images.linux-amd64.tar.zst"  # noqa name[template] yaml[line-length]
+#   ansible.builtin.stat:
+#     path: "{{ playbook_dir }}/tarball_install/rke2-images.linux-amd64.tar.zst"
+#     get_checksum: false
+#   register: got_images_zst
+#   delegate_to: 127.0.0.1
+#   become: false
+
+- name: Create tls directory
+  ansible.builtin.file:
+    path: /var/lib/rancher/rke2/server/tls
+    state: directory
+    mode: '0644'
+
+- name: Add ca_certs to tls directory if provided
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/ca_certs/server/tls/{{ item.item }}"
+    dest: /var/lib/rancher/rke2/server/tls/
+    mode: '0644'
+    with_items: got_custom_ca_certs.results
+  when: item.stat.exists
+

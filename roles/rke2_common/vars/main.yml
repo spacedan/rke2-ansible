@@ -16,3 +16,15 @@ channels:
   - v1.28
 installed: false
 rke2_version_changed: false
+custom_ca_cert_files:
+  - server-ca.crt
+  - server-ca.key
+  - client-ca.key
+  - client-ca.crt
+  - request-header-ca.crt
+  - request-header-ca.key
+  - etcd/peer-ca.crt
+  - etcd/peer-ca.key
+  - etcd/server-ca.crt
+  - etcd/server-ca.key
+  - service.key
