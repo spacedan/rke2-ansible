@@ -10,6 +10,9 @@
 - name: Has rke2 been installed already
   ansible.builtin.include_tasks: previous_install.yml
 
+- name: Check for custom CA certs
+  ansible.builtin.include_tasks: add-custom-certs.yml
+
 - name: Include images_tarball_install.yml
   ansible.builtin.include_tasks: images_tarball_install.yml
 
