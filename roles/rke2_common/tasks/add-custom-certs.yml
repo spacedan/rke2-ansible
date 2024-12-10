@@ -1,11 +1,12 @@
 ---
 - name: "Check for required certs in {{ playbook_dir }}/ca_certs/"  # noqa name[template] yaml[line-length]
-  ansible.builtin.stat:
-    path: "ca_certs/server/tls/{{ item }}"
-  register: got_custom_ca_certs
-  delegate_to: 127.0.0.1
+  local_action: "stat path=ca_certs/server/tls/{{ item }}"
+  # ansible.builtin.stat:
+  #   path: "ca_certs/server/tls/{{ item }}"
+  # delegate_to: 127.0.0.1
   become: false
   loop: "{{ custom_ca_cert_files }}"
+  register: got_custom_ca_certs
 
 - name: Verifying if file exists
   debug: msg="File {{ item.item }} exist"
@@ -25,13 +26,13 @@
     path: /var/lib/rancher/rke2/server/tls
     state: directory
     mode: '0644'
-  when: got_custom_ca_certs.stat.exists
+  when: got_custom_ca_certs.results
 
 - name: Add ca_certs to tls directory if provided
   ansible.builtin.copy:
-    src: "{{ playbook_dir }}/ca_certs/server/tls/{{ item.item }}"
+    src: "ca_certs/server/tls/{{ item.item }}"
     dest: /var/lib/rancher/rke2/server/tls/
     mode: '0644'
-    with_items: got_custom_ca_certs.results
+    with_items: "{{ got_custom_ca_certs.results }}"
   when: item.stat.exists
 
