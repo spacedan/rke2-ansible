@@ -30,9 +30,8 @@
 
 - name: Add ca_certs to tls directory if provided
   ansible.builtin.copy:
-    src: "ca_certs/server/tls/{{ item.item }}"
+    src: "{{ playbook_dir }}/ca_certs/server/tls/{{ item.item }}"
     dest: /var/lib/rancher/rke2/server/tls/
     mode: '0644'
-    with_items: "{{ got_custom_ca_certs.results }}"
+  with_items: "{{ got_custom_ca_certs.results }}"
   when: item.stat.exists
-
