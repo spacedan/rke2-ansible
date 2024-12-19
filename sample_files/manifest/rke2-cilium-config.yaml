@@ -9,5 +9,10 @@ spec:
       enabled: true
       ui: 
        enabled: true
+       baseUrl: /hubble-ui/
+       ingress:
+          enabled: true
+          hosts:
+            - hubble-ui
       relay:
        enabled: true
